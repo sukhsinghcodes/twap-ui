@@ -16,6 +16,8 @@ const fonts = {
   [Configs.PangolinDaas.name]: "Poppins",
   [Configs.SpookySwap.name]: "Red Hat Display",
   [Configs.PancakeSwap.name]: "Kanit",
+  // TODO: replace with Configs.Dfyn.name
+  ["Dfyn"]: "Inter",
 };
 
 export const globalStyle = (name?: string) => {
@@ -492,11 +494,58 @@ export const StyledUISelectorButtons = styled(TwapStyles.StyledRowFlex)({
 export const StyledUISelectorButton = styled("button")({
   background: "transparent",
   cursor: "pointer",
-  transition: "0.2s all",
+  transition: "0s all",
   borderBottom: "2px solid transparent",
   padding: "10px 20px",
   border: "unset",
   borderRadius: 10,
   fontSize: 14,
   fontWeight: 500,
+});
+
+export const StyledDfyn = styled(StyledDapp)(({ isDarkMode }: { isDarkMode: number }) => ({
+  background: "rgb(2 7 31/1)",
+  ".ui-selector-btn": {
+    background: isDarkMode ? "rgba(255,255,255, 0.08)" : "white",
+    color: isDarkMode ? "white" : "black",
+  },
+  ".ui-selector-btn-selected": {
+    background: "linear-gradient(to right,#9E5BF1,#356FF4 )",
+    color: "white",
+  },
+  ".menu-button": {
+    svg: {
+      "* ": {
+        color: isDarkMode ? "white" : "black",
+      },
+    },
+  },
+}));
+
+export const StyledDfynLayout = styled(DappLayout)({
+  width: "calc(100% - 30px)",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+});
+
+export const StyledStyledDfynPanel = styled(Box)({
+  width: "100%",
+  maxWidth: 600,
+});
+
+export const StyledStyledDfynOrders = styled(Box)({
+  width: "100%",
+  maxWidth: 930,
+  "@media (max-width:1400px)": {
+    maxWidth: 700,
+    ".twap-chronos-orders-header": {
+      gap: 20,
+      flexDirection: "column",
+      alignItems: "flex-start",
+      "&-right": {
+        marginLeft: "unset",
+      },
+    },
+  },
 });
