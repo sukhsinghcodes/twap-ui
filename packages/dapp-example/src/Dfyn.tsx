@@ -25,54 +25,59 @@ const config = {
   bidDelaySeconds: 60,
   minChunkSizeUsd: 10,
   nativeToken: {
-    address: '',
-    symbol: '',
+    address: "",
+    symbol: "",
     decimals: 0,
-    logoUrl: '',
+    logoUrl: "",
   },
   wToken: {
-    symbol: '',
-    address: '',
+    symbol: "",
+    address: "",
     decimals: 0,
-    weth: '',
-    logoUrl: '',
+    weth: "",
+    logoUrl: "",
   },
-  twapAbi: [{
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_iweth",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },],
-  lensAbi: [{
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_iweth",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },],
-  takerAbi: [{
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_iweth",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },],
+  twapAbi: [
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_iweth",
+          type: "address",
+        },
+      ],
+      stateMutability: "nonpayable",
+      type: "constructor",
+    },
+  ],
+  lensAbi: [
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_iweth",
+          type: "address",
+        },
+      ],
+      stateMutability: "nonpayable",
+      type: "constructor",
+    },
+  ],
+  takerAbi: [
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_iweth",
+          type: "address",
+        },
+      ],
+      stateMutability: "nonpayable",
+      type: "constructor",
+    },
+  ],
   pathfinderKey: ParaswapOnlyDex.Chronos,
-
-}
+};
 
 export const useDappTokens = () => {
   const { account } = useWeb3React();

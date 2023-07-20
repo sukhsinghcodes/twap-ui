@@ -116,8 +116,11 @@ const buttonStyles = () => {
 
 export const configureStyles = () => {
   return {
+    "*": {
+      color: `${styles.textColor}`,
+    },
     ".twap-container": {
-      color: `${styles.textColor} !important`,
+      color: `${styles.textColor}`,
     },
     ".twap-market-price": {
       width: "auto!important",

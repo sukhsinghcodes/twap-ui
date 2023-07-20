@@ -1,28 +1,12 @@
-import { GlobalStyles, Stack, ThemeProvider } from "@mui/material";
-import {
-  Components,
-  Translations,
-  TwapAdapter,
-  hooks,
-  TWAPProps,
-  store,
-  Orders,
-  ORDERS_CONTAINER_ID,
-} from "@orbs-network/twap-ui";
+import { GlobalStyles, Stack, TextField, ThemeProvider } from "@mui/material";
+import { Components, Translations, TwapAdapter, hooks, TWAPProps, Orders, ORDERS_CONTAINER_ID, TwapContextUIPreferences } from "@orbs-network/twap-ui";
 import { createContext, useContext, useEffect } from "react";
 import translations from "./i18n/en.json";
 import { Box } from "@mui/system";
-import {
-  DfynCard,
-  PrimaryButton,
-  configureStyles,
-  theme,
-} from "./styles";
+import { DfynCard, configureStyles, theme } from "./styles";
 import { Configs, Status, TokenData } from "@orbs-network/twap";
 import { isNativeAddress } from "@defi.org/web3-candies";
 import Web3 from "web3";
-import { TwapContextUIPreferences } from "@orbs-network/twap-ui";
-
 
 interface DfynTWAPProps extends TWAPProps {
   getTokenLogoURL: (address: string) => string;
@@ -37,7 +21,6 @@ const uiPreferences: TwapContextUIPreferences = {
   switchVariant: "ios",
   orderTabsToExclude: [Status.Canceled],
 };
-
 
 interface DfynRawToken {
   name: string;
@@ -70,19 +53,6 @@ const AdapterContextProvider = AdapterContext.Provider;
 
 const useAdapterContext = () => useContext(AdapterContext);
 
-
-
-
-
-
-
-const limitStoreOverride = {
-  isLimitOrder: true,
-  chunks: 1,
-  customDuration: { resolution: store.TimeResolution.Days, amount: 7 },
-  customFillDelay: { resolution: store.TimeResolution.Minutes, amount: 2 },
-};
-
 const Listener = () => {
   const switchTokens = hooks.useSwitchTokens();
 
@@ -111,7 +81,6 @@ const TWAP = (props: DfynTWAPProps) => {
         parseToken={(rawToken) => parseToken(props.getTokenLogoURL, rawToken)}
         srcToken={props.srcToken}
         dstToken={props.dstToken}
-        storeOverride={props.limit ? limitStoreOverride : undefined}
         uiPreferences={uiPreferences}
       >
         <ThemeProvider theme={theme}>
@@ -120,26 +89,44 @@ const TWAP = (props: DfynTWAPProps) => {
             <Listener />
             <div className="twap-container">
               <DfynCard>
-                <Stack spacing={1}>
-
-                  <div>TWAPPanel</div>
-                  <PrimaryButton onClick={() => console.log('bam')}>Approve USDC</PrimaryButton>
-                  <PrimaryButton disabled onClick={() => console.log('bam')}>Insufficient funds</PrimaryButton>
+                <Stack spacing={1} style={{ width: '100%' }}>
+                  <Stack direction="row" spacing={1}>
+                    <Components.TokenSelect onClick={() => console.log('selecting token')} />
+                    <Components.TokenSelect onClick={() => console.log('selecting token')} />
+                    <Components.Base.IconButton onClick={() => console.log('switch')}><svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg></Components.Base.IconButton>
+                  </Stack>
+                  <TextField label="From" variant="outlined" />
+                  <Components.Base.IconButton onClick={() => console.log('switch')}><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="h-[0.875rem] w-[0.875rem]"><polyline points="6 9 12 15 18 9"></polyline></svg></Components.Base.IconButton>
+                  <TextField label="To" variant="outlined" />
+                  <Components.MarketPrice />
+                  <div>
+                    Limit: <Components.LimitPriceToggle />
+                  </div>
+                  <div>
+                    Limit price: <Components.LimitPriceInput />
+                  </div>
+                  <div>
+                    Trade size: <Components.TradeSize />
+                  </div>
+                  <div>
+                    Trade interval selector: <Components.TradeIntervalSelector />
+                  </div>
+                  <div>
+                    Max duration: <Components.MaxDurationSelector />
+                  </div>
+                  <Stack direction="row" spacing={1}>
+                    <Components.SubmitButton />
+                  </Stack>
+                  <Components.PoweredBy />
                 </Stack>
-
               </DfynCard>
             </div>
-            <Components.Base.Portal id={ORDERS_CONTAINER_ID}>
-              Orders
-            </Components.Base.Portal>
+            <Components.Base.Portal id={ORDERS_CONTAINER_ID}><Components.OrderSummaryDetails /></Components.Base.Portal>
           </AdapterContextProvider>
         </ThemeProvider>
       </TwapAdapter>
     </Box>
   );
 };
-
-
-
 
 export { Orders, TWAP };
