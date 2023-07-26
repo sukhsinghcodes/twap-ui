@@ -67,11 +67,49 @@ const styles = {
   }),
 };
 
-export const PrimaryButton = styled(Components.Base.Button)();
+export const DfynTokenSelect = styled(Components.TokenSelect)`
+  font-size: 1.25em;
+  font-weight: 600;
+  background-color: rgb(35, 38, 47);
+  color: rgb(255, 255, 255);
+  border-radius: 0.75em;
+  box-shadow: none;
+  outline: none;
+  cursor: pointer;
+  user-select: none;
+  padding: 0.5rem;
+  min-width: 8ch;
+  width: 100%;
+  display: grid;
+  -webkit-box-align: center;
+  place-items: center;
+  grid-template-columns: 2em auto 1em;
+  gap: 0.25rem;
+`;
 
 export const DfynCard = styled(Components.Base.Card)({
   border: `1px solid ${styles.border}`,
 });
+
+export const DfynTokenSwitchButton = styled(Components.Base.IconButton)`
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  text-decoration-line: none;
+
+  border: 1px solid hsla(0, 0%, 100%, 0.2);
+
+  background-color: rgba(0, 0, 0, 0.2) !important;
+
+  border-radius: 0.75em;
+
+  padding: 0.5em;
+
+  * {
+    color: rgb(119 126 144) !important;
+  }
+`;
 
 const button = styles.button(Networks.Polygon);
 

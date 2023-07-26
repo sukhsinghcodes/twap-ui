@@ -1,9 +1,9 @@
 import { GlobalStyles, Stack, TextField, ThemeProvider } from "@mui/material";
-import { Components, Translations, TwapAdapter, hooks, TWAPProps, Orders, ORDERS_CONTAINER_ID, TwapContextUIPreferences } from "@orbs-network/twap-ui";
-import { createContext, useContext, useEffect } from "react";
+import { Components, Translations, TwapAdapter, hooks, TWAPProps, Orders, ORDERS_CONTAINER_ID, TwapContextUIPreferences, TWAPTokenSelectProps } from "@orbs-network/twap-ui";
+import { createContext, memo, useCallback, useContext, useEffect, useState } from "react";
 import translations from "./i18n/en.json";
 import { Box } from "@mui/system";
-import { DfynCard, configureStyles, theme } from "./styles";
+import { DfynCard, DfynTokenSelect, DfynTokenSwitchButton, configureStyles, theme } from "./styles";
 import { Configs, Status, TokenData } from "@orbs-network/twap";
 import { isNativeAddress } from "@defi.org/web3-candies";
 import Web3 from "web3";
@@ -31,7 +31,7 @@ interface DfynRawToken {
 
 const config = Configs.QuickSwap;
 
-const parseToken = (getTokenLogoURL: (symbol: string) => string, rawToken: DfynRawToken): TokenData | undefined => {
+const parseDfynToken = (getTokenLogoURL: (symbol: string) => string, rawToken: DfynRawToken): TokenData | undefined => {
   if (!rawToken.symbol) {
     console.error("Invalid token", rawToken);
     return;
@@ -66,7 +66,37 @@ const Listener = () => {
   return <></>;
 };
 
+const ModifiedTokenSelectModal = (props: TWAPTokenSelectProps) => {
+  const TokenSelectModal = useAdapterContext().TokenSelectModal;
+
+  return <TokenSelectModal onCurrencySelect={props.onSelect} isOpen={props.isOpen} onClose={props.onClose} />;
+};
+
+const memoizedTokenSelect = memo(ModifiedTokenSelectModal);
+
+const TokenSelectModal = ({ isOpen, onClose, isSrcToken, parseToken }: { parseToken: (rawToken: any) => TokenData | undefined, isOpen: boolean; onClose: () => void; isSrcToken: boolean }) => {
+  const { onSrcTokenSelected, onDstTokenSelected } = useAdapterContext();
+
+  return (
+    <Components.TokenSelectModal
+      Component={memoizedTokenSelect}
+      onSrcSelect={onSrcTokenSelected}
+      onDstSelect={onDstTokenSelected}
+      isOpen={isOpen}
+      onClose={onClose}
+      isSrc={isSrcToken}
+      parseToken={parseToken}
+    />
+  );
+};
+
 const TWAP = (props: DfynTWAPProps) => {
+  const [showTokens, setShowTokens] = useState(false);
+
+  console.log("showTokens", showTokens);
+
+  const parseToken = useCallback((rawToken: any) => parseDfynToken(props.getTokenLogoURL, rawToken), [props.getTokenLogoURL]);
+
   return (
     <Box className="adapter-wrapper">
       <TwapAdapter
@@ -78,7 +108,7 @@ const TWAP = (props: DfynTWAPProps) => {
         provider={props.provider}
         account={props.account}
         dappTokens={props.dappTokens}
-        parseToken={(rawToken) => parseToken(props.getTokenLogoURL, rawToken)}
+        parseToken={parseToken}
         srcToken={props.srcToken}
         dstToken={props.dstToken}
         uiPreferences={uiPreferences}
@@ -89,14 +119,47 @@ const TWAP = (props: DfynTWAPProps) => {
             <Listener />
             <div className="twap-container">
               <DfynCard>
-                <Stack spacing={1} style={{ width: '100%' }}>
+                <Stack spacing={1} style={{ width: "100%" }}>
                   <Stack direction="row" spacing={1}>
-                    <Components.TokenSelect onClick={() => console.log('selecting token')} />
-                    <Components.TokenSelect onClick={() => console.log('selecting token')} />
-                    <Components.Base.IconButton onClick={() => console.log('switch')}><svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg></Components.Base.IconButton>
+                    <TokenSelectModal parseToken={parseToken} isOpen={showTokens} onClose={() => setShowTokens(false)} isSrcToken={true} />
+                    <DfynTokenSelect onClick={() => setShowTokens(true)} isSrc={true} />
+                    <DfynTokenSelect onClick={() => setShowTokens(true)} />
+                    <DfynTokenSwitchButton onClick={() => console.log("switch")}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <polyline points="17 1 21 5 17 9"></polyline>
+                        <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                        <polyline points="7 23 3 19 7 15"></polyline>
+                        <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                      </svg>
+                    </DfynTokenSwitchButton>
                   </Stack>
                   <TextField label="From" variant="outlined" />
-                  <Components.Base.IconButton onClick={() => console.log('switch')}><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="h-[0.875rem] w-[0.875rem]"><polyline points="6 9 12 15 18 9"></polyline></svg></Components.Base.IconButton>
+                  <Components.Base.IconButton onClick={() => console.log("switch")}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      className="h-[0.875rem] w-[0.875rem]"
+                    >
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </Components.Base.IconButton>
                   <TextField label="To" variant="outlined" />
                   <Components.MarketPrice />
                   <div>
@@ -121,7 +184,9 @@ const TWAP = (props: DfynTWAPProps) => {
                 </Stack>
               </DfynCard>
             </div>
-            <Components.Base.Portal id={ORDERS_CONTAINER_ID}><Components.OrderSummaryDetails /></Components.Base.Portal>
+            <Components.Base.Portal id={ORDERS_CONTAINER_ID}>
+              <Components.OrderSummaryDetails />
+            </Components.Base.Portal>
           </AdapterContextProvider>
         </ThemeProvider>
       </TwapAdapter>

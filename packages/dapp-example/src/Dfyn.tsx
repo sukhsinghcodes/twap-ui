@@ -1,4 +1,4 @@
-import { StyledDfyn, StyledStyledDfynPanel, StyledStyledDfynOrders, StyledDfynLayout, StyledModalContent } from "./styles";
+import { StyledDfyn, StyledStyledDfynPanel, StyledDfynLayout, StyledModalContent } from "./styles";
 import { useConnectWallet, useNetwork } from "./hooks";
 import { Configs, ParaswapOnlyDex } from "@orbs-network/twap";
 import { TWAP, Orders } from "@orbs-network/twap-ui-dfyn";
@@ -189,10 +189,6 @@ const DappComponent = () => {
         <StyledStyledDfynPanel>
           <TWAPComponent />
         </StyledStyledDfynPanel>
-
-        <StyledStyledDfynOrders>
-          <Orders />
-        </StyledStyledDfynOrders>
       </StyledDfynLayout>
     </StyledDfyn>
   );
